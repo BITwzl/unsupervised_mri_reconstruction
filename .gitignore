@@ -1,0 +1,6 @@
+*.txt
+__pycache__
+*.mat
+.ipynb_checkpoints/
+mask1
+results

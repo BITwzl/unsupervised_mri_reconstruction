@@ -1,0 +1,60 @@
+exp_name : bit_parcel
+solvers: solvers_unsup
+
+model_type: MultipleNetwork
+model_params:
+    in_channels: 2
+    out_channels: 2
+    num_layers : 5
+    num_models : 2
+
+forward_method: forward_parcel_multi
+init_method : tcp://localhost:1837
+nodes : 1
+gpus : 1
+# world_size : 1  # 
+use_init_weights : False
+init_type : xavier
+gain : 1.0
+seed : 20
+lr : 0.0001
+batch_size : 4
+num_workers : 8
+warmup_epochs : 5
+num_epochs : 100
+MLP_type: MLP_t1
+
+dataset_type: CustomBITDataSet
+dataset_params:
+    train:
+        hr_img_path: /home/wzl/Reconstruction/KSMIR/datasets/BITMRI/t1/hr/train
+        mask_configs:
+        - type: fixed
+          path: ./mask1/240/10.mat
+          repath: ./mask1/remask1_cartesian10_2.00x_acs16.npy 
+        - type: fixed
+          path: ./mask1/240/10.mat
+          repath: ./mask1/remask2_cartesian10_2.50x_acs16.npy
+    val:
+        hr_img_path: /home/wzl/Reconstruction/KSMIR/datasets/BITMRI/t1/hr/test
+        mask_configs:
+        - type: fixed
+          path: ./mask1/240/10.mat
+          repath: ./mask1/remask1_cartesian10_2.00x_acs16.npy
+        - type: fixed
+          path: ./mask1/240/10.mat
+          repath: ./mask1/remask2_cartesian10_2.50x_acs16.npy
+    test:
+        hr_img_path: /home/wzl/Reconstruction/KSMIR/datasets/BITMRI/t1/hr/test
+        mask_configs:
+        - type: fixed
+          path: ./mask1/240/10.mat
+          repath: ./mask1/remask1_cartesian10_2.00x_acs16.npy
+        - type: fixed
+          path: ./mask1/240/10.mat
+          repath: ./mask1/remask2_cartesian10_2.50x_acs16.npy
+
+# model_save_path : ./checkpoints/
+# loss_curve_path : ./runs/loss_curve/
+mode : train
+pretrained : False

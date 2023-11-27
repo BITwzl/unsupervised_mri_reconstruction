@@ -1,0 +1,62 @@
+exp_name : scalefastmri_parcel
+solvers: solvers_unsup
+
+forward_method: forward_parcel
+model_type: ParallelNetwork
+model_params:
+    in_channels: 2
+    out_channels: 2
+    num_layers : 5
+
+init_method : tcp://localhost:1837
+nodes : 1
+gpus : 1
+# world_size : 1  # 
+use_init_weights : False
+init_type : xavier
+gain : 1.0
+seed : 20
+lr : 0.0001
+batch_size : 4
+num_workers : 8
+warmup_epochs : 5
+num_epochs : 100
+
+dataset_type: CustomFastMRIDataSet
+dataset_params:
+    train:
+        data_path: /mnt/wzl/dataset/fastmri/multicoil_train
+        mask_configs:
+        - type: fixed
+          path: ./mask1/undersampling_mask/mask_3.00x_acs24.mat
+          repath: ./mask1/remask1_cartesian10_2.00x_acs16.npy 
+        - type: fixed
+          path: ./mask1/undersampling_mask/mask_3.00x_acs24.mat
+          repath: ./mask1/remask2_cartesian10_2.50x_acs16.npy
+        sample_rate: 0.2
+    val:
+        data_path: /mnt/wzl/dataset/fastmri/multicoil_val
+        mask_configs:
+        - type: fixed
+          path: ./mask1/undersampling_mask/mask_3.00x_acs24.mat
+          repath: ./mask1/remask1_cartesian10_2.00x_acs16.npy 
+        - type: fixed
+          path: ./mask1/undersampling_mask/mask_3.00x_acs24.mat
+          repath: ./mask1/remask2_cartesian10_2.50x_acs16.npy
+        sample_rate: 0.1
+    test:
+        data_path: /mnt/wzl/dataset/fastmri/multicoil_val
+        mask_configs:
+        - type: fixed
+          path: ./mask1/undersampling_mask/mask_3.00x_acs24.mat
+          repath: ./mask1/remask1_cartesian10_2.00x_acs16.npy 
+        - type: fixed
+          path: ./mask1/undersampling_mask/mask_3.00x_acs24.mat
+          repath: ./mask1/remask2_cartesian10_2.50x_acs16.npy
+        sample_rate: -0.1
+MLP_type: MLP_FastMRI
+
+# model_save_path : ./checkpoints/
+# loss_curve_path : ./runs/loss_curve/
+mode : train
+pretrained : False

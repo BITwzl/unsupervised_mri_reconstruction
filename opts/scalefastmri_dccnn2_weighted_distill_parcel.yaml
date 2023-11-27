@@ -1,0 +1,73 @@
+exp_name : scalefastmri_dccnn2_weighted_distill_parcel_unsup
+solvers: solvers_unsup
+
+model_type: DnCn
+model_params:
+    in_channels: 2
+    out_channels: 2
+    nc: 8
+    nd: 8
+
+forward_method: forward_dccnn_distill_parcel
+init_method : tcp://localhost:1836
+nodes : 1
+gpus : 1
+# world_size : 1  # 
+use_init_weights : False
+init_type : xavier
+gain : 1.0
+seed : 20
+lr : 0.0001
+batch_size : 4
+num_workers : 8
+warmup_epochs : 5
+num_epochs : 100
+
+distillee_params :
+  model_type: ParallelNetwork
+  model_params:
+      num_layers : 5
+      in_channels : 2
+      out_channels : 2
+  model_save_path: /dfs/data/wuzl7/medical/PARCEL/DUR/results/scalefastmri_parcel_unsup/checkpoints
+  sample_reweighting: sum_se_weighted
+  average: 152299.58
+
+dataset_type: CustomFastMRIDataSet
+dataset_params:
+    train:
+        data_path: /mnt/wzl/dataset/fastmri/multicoil_train
+        mask_configs:
+        - type: fixed
+          path: ./mask1/undersampling_mask/mask_3.00x_acs24.mat
+          repath: ./mask1/remask1_cartesian10_2.00x_acs16.npy 
+        - type: fixed
+          path: ./mask1/undersampling_mask/mask_3.00x_acs24.mat
+          repath: ./mask1/remask2_cartesian10_2.50x_acs16.npy
+        sample_rate: 0.2
+    val:
+        data_path: /mnt/wzl/dataset/fastmri/multicoil_val
+        mask_configs:
+        - type: fixed
+          path: ./mask1/undersampling_mask/mask_3.00x_acs24.mat
+          repath: ./mask1/remask1_cartesian10_2.00x_acs16.npy 
+        - type: fixed
+          path: ./mask1/undersampling_mask/mask_3.00x_acs24.mat
+          repath: ./mask1/remask2_cartesian10_2.50x_acs16.npy
+        sample_rate: 0.1
+    test:
+        data_path: /mnt/wzl/dataset/fastmri/multicoil_val
+        mask_configs:
+        - type: fixed
+          path: ./mask1/undersampling_mask/mask_3.00x_acs24.mat
+          repath: ./mask1/remask1_cartesian10_2.00x_acs16.npy 
+        - type: fixed
+          path: ./mask1/undersampling_mask/mask_3.00x_acs24.mat
+          repath: ./mask1/remask2_cartesian10_2.50x_acs16.npy
+        sample_rate: -0.1
+MLP_type: MLP_FastMRI
+
+# model_save_path : ./checkpoints/
+# loss_curve_path : ./runs/loss_curve/
+mode : train
+pretrained : False
